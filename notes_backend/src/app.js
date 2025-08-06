@@ -3,6 +3,7 @@ const express = require('express');
 const routes = require('./routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('../swagger');
+const { sequelize } = require('./models/index');
 
 // Initialize express app
 const app = express();
@@ -40,6 +41,11 @@ app.use('/docs', swaggerUi.serve, (req, res, next) => {
 
 // Parse JSON request body
 app.use(express.json());
+
+// SYNC database models at startup
+sequelize.sync().then(() => {
+  console.log('Database synchronized');
+});
 
 // Mount routes
 app.use('/', routes);
